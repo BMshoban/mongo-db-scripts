@@ -6,7 +6,7 @@ db.users.updateOne(
   { email: "user1@shoban.com" },
   {
     $set: {
-      role: "ADMIN",
+      phone: "+91-9000000001",
       updatedAt: new Date()
     }
   }
