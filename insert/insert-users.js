@@ -1,8 +1,3 @@
-db.users.createIndex(
-  { email: 1 },
-  { unique: true }
-);
-
 db.users.countDocuments({
   email: "user1@shoban.com"
 });
