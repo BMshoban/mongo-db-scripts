@@ -4,7 +4,7 @@ db.users.countDocuments({
 });
 
 // ===== UPDATE OPERATION =====
-db.users.updateMany(
+db.users.updateOne(
   { email: FILTER },
   {
     $set: SET_DATA
