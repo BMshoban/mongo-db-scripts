@@ -1,5 +1,12 @@
+// ===== Impact Preview =====
 db.users.countDocuments({
-  email: {
-    $in: USERS
-  }
+  email: FILTER
 });
+
+// ===== UPDATE OPERATION =====
+db.users.updateMany(
+  { email: FILTER },
+  {
+    $set: SET_DATA
+  }
+);
