@@ -1,11 +1,9 @@
-// ===== Impact Preview =====
 db.users.countDocuments({
-  email: "FILTER_EMAIL"
+  _id: ObjectId("FILTER_ID")
 });
 
-// ===== UPDATE OPERATION =====
 db.users.updateOne(
-  { email: "FILTER_EMAIL" },
+  { _id: ObjectId("FILTER_ID") },
   {
     $set: SET_DATA
   }
