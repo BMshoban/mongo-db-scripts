@@ -12,6 +12,7 @@ db.customers.updateMany(
   },
   {
     $set: {
+      name: "VAR6",
       status: "VAR4",
       updatedBy: "VAR5",
       updatedAt: new Date()
