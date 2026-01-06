@@ -1,16 +1,20 @@
-// STEP 2.1: FILTER PLACEHOLDER
-const filter = {
-  email: FILTER_EMAIL
-};
 
-// STEP 2.2: PREVIEW COUNT (MANDATORY)
-db.users.countDocuments(filter);
+db.customers.countDocuments({
+  org_id: "VAR1",
+  _id: { $in: VAR2 }
+});
 
-// STEP 2.3: UPDATE
-db.users.updateOne(
-  filter,
+
+db.customers.updateMany(
   {
-    $set: SET_DATA
+    org_id: "VAR1",
+    _id: { $in: VAR2 }
+  },
+  {
+    $set: {
+      status: "VAR4",
+      updatedBy: "VAR5",
+      updatedAt: new Date()
+    }
   }
 );
-
