@@ -1,14 +1,16 @@
-db.users.countDocuments({
-  email: "user1@shoban.com"
-});
+// STEP 2.1: FILTER PLACEHOLDER
+const filter = {
+  email: FILTER_EMAIL
+};
 
+// STEP 2.2: PREVIEW COUNT (MANDATORY)
+db.users.countDocuments(filter);
+
+// STEP 2.3: UPDATE
 db.users.updateOne(
-  { email: "user1@shoban.com" },
+  filter,
   {
-    $set: {
-      role: "ADMIN",
-      phone: "+91-9176663569",
-      updatedAt: new Date()
-    }
+    $set: SET_DATA
   }
 );
+

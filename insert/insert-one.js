@@ -1,13 +1,16 @@
-db.users.countDocuments({
-  email: "user1@shoban.com"
+const user = db.users.findOne({ email: FILTER_EMAIL });
+
+if (!user) {
+  throw new Error("User not found: " + FILTER_EMAIL);
+}
+
+db.user_metadata.insertOne({
+  userId: user._id,
+  email: user.email,
+  INSERT_DATA
 });
 
-db.users.insertOne({
-  username: "shoban_user1",
-  email: "user1@shoban.com",
-  role: "USER",
-  status: "ACTIVE",
-  phone: "+91-9000000001",
-  createdAt: new Date(),
-  updatedAt: new Date()
+db.user_metadata.countDocuments({
+  email: FILTER_EMAIL
 });
+
