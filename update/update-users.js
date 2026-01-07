@@ -1,9 +1,9 @@
-db.customers.countDocuments({
+db.todos.countDocuments({
   org_id: "VAR1",
   _id: { $in: VAR2 }
 });
 
-db.customers.updateMany(
+db.todos.updateMany(
   {
     org_id: "VAR1",
     _id: { $in: VAR2 }
