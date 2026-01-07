@@ -1,12 +1,10 @@
-db.todos.countDocuments({
-  org_id: "VAR1",
-  _id: { $in: VAR2 }
+db.customerdata1.countDocuments({
+  _id: { $in: VAR1 }
 });
 
-db.todos.updateMany(
+db.customerdata1.updateMany(
   {
-    org_id: "VAR1",
-    _id: { $in: VAR2 }
+    _id: { $in: VAR1 }
   },
   {
     $set: SET_DATA
