@@ -30,9 +30,9 @@ async function count() {
 }
 
 
-async function backup(){
+//async function backup(){
 
-}
+//}
 
 async function script() {
   const org_update = await db.organizations2_locals.updateOne({ _id:{ $in: VAR1 } }, {
@@ -46,7 +46,7 @@ async function script() {
 // BACKUPS
   //console.log({ org_update })
 
-  const customer_update = await db.customerdata1.updateOne({ org_id: VAR2 }, [{
+  const customer_update = await db.organizations2_locals.updateOne({ org_id: VAR2 }, [{
     $set: {
       customer_portal_url: { $concat: [VAR3, "$customer_portal_hash"] }
     }
