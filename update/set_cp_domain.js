@@ -1,6 +1,11 @@
 function validate() {
-  return VAR1 && VAR2 && VAR3 ? true : false
+  if (!VAR1 || !VAR2 || !VAR3) {
+    print("ERROR: VAR1, VAR2, VAR3 are required");
+    return false;
+  }
+  return true;
 }
+
 
 async function count() {
   const org_count = await db.organizations2_locals.find({ _id: VAR1 }).count();
@@ -17,7 +22,7 @@ async function backup(){
 }
 
 async function script() {
-  const org_update = await db.organizations2_locals.update({ _id: VAR1 }, {
+  const org_update = await db.organizations2_locals.updateOne({ _id:{ $in: VAR1 } }, {
     $set: {
       customer_portal_url: {
         domain_name: VAR3,
@@ -28,7 +33,7 @@ async function script() {
 // BACKUPS
   //console.log({ org_update })
 
-  const customer_update = await db.customerdata1.update({ org_id: VAR2 }, [{
+  const customer_update = await db.customerdata1.updateOne({ org_id: VAR2 }, [{
     $set: {
       customer_portal_url: { $concat: [VAR3, "$customer_portal_hash"] }
     }
