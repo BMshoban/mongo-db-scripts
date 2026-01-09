@@ -4,8 +4,8 @@ function validate() {
     return false;
   }
 
-  if (!VAR2 || !VAR3) {
-    print("ERROR: VAR2 and VAR3 are required");
+  if (!VAR2 ) {
+    print("ERROR: VAR2  required");
     return false;
   }
 
@@ -15,18 +15,17 @@ function validate() {
 
 
 async function count() {
-  const org_count = await db.organizations2_locals
-    .find({ _id: { $in: VAR1 } })
-    .count();
-
-  const customer_count = await db.customerdata1
-    .find({ _id: { $in: VAR2 } })
-    .count();
-
-  print({
-    org_count,
-    customer_count
+  const org_count = await db.organizations2_locals.countDocuments({
+    _id: { $in: VAR1 }
   });
+
+  const customer_count = await db.customerdata1.countDocuments({
+    _id: { $in: VAR1 }
+  });
+
+  print(`INFO: org_count=${org_count}, customer_count=${customer_count}`);
+
+  return { org_count, customer_count };
 }
 
 async function preview() {
@@ -48,7 +47,7 @@ async function script() {
   const org_update = await db.organizations2_locals.updateOne({ _id:{ $in: VAR1 } }, {
     $set: {
       customer_portal_url: {
-        domain_name: VAR3,
+        domain_name: VAR2,
         is_configured: true
       }
     }
@@ -56,9 +55,9 @@ async function script() {
 // BACKUPS
   //console.log({ org_update })
 
-  const customer_update = await db.customerdata1.updateOne({ _id: { $in: VAR2 } }, [{
+  const customer_update = await db.customerdata1.updateOne({ _id: { $in: VAR1 } }, [{
     $set: {
-      customer_portal_url: { $concat: [VAR3, "$customer_portal_hash"] }
+      customer_portal_url: { $concat: [VAR2, "$customer_portal_hash"] }
     }
   }]);
 
