@@ -1,21 +1,34 @@
 function validate() {
-  if (!VAR1 || !VAR2 || !VAR3) {
-    print("ERROR: VAR1, VAR2, VAR3 are required");
+  if (typeof VAR1 === "undefined") {
+    print("ERROR: VAR1 is required");
     return false;
   }
+
+  if (!VAR2 || !VAR3) {
+    print("ERROR: VAR2 and VAR3 are required");
+    return false;
+  }
+
   return true;
 }
 
 
-async function count() {
-  const org_count = await db.organizations2_locals.find({ _id: VAR1 }).count();
-  const customer_count = await db.customerdata1.find({ org_id: VAR2 }).count();
 
-  console.log({
+async function count() {
+  const org_count = await db.organizations2_locals
+    .find({ _id: { $in: VAR1 } })
+    .count();
+
+  const customer_count = await db.customerdata1
+    .find({ org_id: VAR2 })
+    .count();
+
+  print({
     org_count,
     customer_count
-  })
+  });
 }
+
 
 async function backup(){
 
@@ -41,3 +54,20 @@ async function script() {
 
   console.log({ customer_update })
 }
+
+
+(async function main() {
+  try {
+    if (!validate()) {
+      quit(1);   // abort Jenkins
+    }
+
+    await count();   // optional
+    await script();  // main logic
+
+    quit(0);         // continue Jenkins
+  } catch (e) {
+    print("ERROR:", e.message);
+    quit(1);         // abort Jenkins
+  }
+})();
