@@ -1,16 +1,17 @@
 function validate() {
-  if (typeof VAR1 === "undefined") {
-    print("ERROR: VAR1 is required");
+  if (!Array.isArray(VAR1) || VAR1.length === 0) {
+    print("ERROR: VAR1 is required and must be a non-empty array");
     return false;
   }
 
-  if (!VAR2 ) {
-    print("ERROR: VAR2  required");
+  if (!VAR2 || typeof VAR2 !== "string") {
+    print("ERROR: VAR2 is required");
     return false;
   }
 
   return true;
 }
+
 
 
 
