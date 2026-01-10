@@ -4,7 +4,7 @@ function validate() {
     return false;
   }
 
-  if (!VAR2 || typeof VAR2 !== "string") {
+  if (!VAR2 || VAR3 ||typeof VAR2 !== "string") {
     print("ERROR: VAR2 is required");
     return false;
   }
@@ -21,7 +21,7 @@ async function count() {
   });
 
   const customer_count = await db.customerdata1.countDocuments({
-    _id: { $in: VAR1 }
+    _id: { $in: VAR2 }
   });
 
   print(`INFO: org_count=${org_count}, customer_count=${customer_count}`);
@@ -48,7 +48,7 @@ async function script() {
   const org_update = await db.organizations2_locals.updateOne({ _id:{ $in: VAR1 } }, {
     $set: {
       customer_portal_url: {
-        domain_name: VAR2,
+        domain_name: VAR3,
         is_configured: true
       }
     }
@@ -56,9 +56,9 @@ async function script() {
 // BACKUPS
   //console.log({ org_update })
 
-  const customer_update = await db.customerdata1.updateOne({ _id: { $in: VAR1 } }, [{
+  const customer_update = await db.customerdata1.updateOne({ _id: { $in: VAR2 } }, [{
     $set: {
-      customer_portal_url: { $concat: [VAR2, "$customer_portal_hash"] }
+      customer_portal_url: { $concat: [VAR3, "$customer_portal_hash"] }
     }
   }]);
 
