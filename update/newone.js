@@ -1,17 +1,3 @@
-function validate() {
-  if (typeof VAR1 === "undefined") {
-    print("ERROR: VAR1 is required");
-    return false;
-  }
-
-  if (typeof VAR2 === "undefined") {
-    print("ERROR: VAR2 is required");
-    return false;
-  }
-
-  return true;
-}
-
 function toArray(v) {
   return Array.isArray(v) ? v : [v];
 }
