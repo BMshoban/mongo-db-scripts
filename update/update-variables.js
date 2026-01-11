@@ -17,7 +17,7 @@ async function script() {
   const orgId = toOne(VAR1);
 
   await db.organizations2_locals.updateOne(
-    { _id: orgId },   // ✅ EXACT ONE DOCUMENT
+    { _id: orgId },   
     {
       $set: {
         customer_portal_url: {

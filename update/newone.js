@@ -23,13 +23,15 @@ async function script() {
   const customerIds = toArray(VAR2);
 
   await db.organizations2_locals.updateOne(
-    { _id: { $in: orgIds } },
+    { _id: orgIds[0] },
     {
       $set: {
         customer_portal_url: {
           domain_name: VAR3 ?? "",
           is_configured: true
-        }
+        },
+        updatedAt: new Date(),
+  updatedBy: typeof UPDATED_BY !== "undefined" ? UPDATED_BY : "JENKINS"
       }
     }
   );
