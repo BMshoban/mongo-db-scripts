@@ -2,6 +2,20 @@ function toArray(v) {
   return Array.isArray(v) ? v : [v];
 }
 
+async function validate() {
+  if (!VAR1 || !VAR2) {
+    print("ERROR: VAR1 and VAR2 are required");
+    return false;
+  }
+
+  if (toArray(VAR1).length > 2 || toArray(VAR2).length > 2) {
+    print("ERROR: Max 2 users allowed per collection");
+    return false;
+  }
+
+  return true;
+}
+
 async function count() {
   const orgIds = toArray(VAR1);
   const customerIds = toArray(VAR2);
@@ -22,8 +36,9 @@ async function script() {
   const orgIds = toArray(VAR1);
   const customerIds = toArray(VAR2);
 
-  await db.organizations2_locals.updateOne(
-    { _id: orgIds[0] },
+  // 🔹 Update ORG collection
+  await db.organizations2_locals.updateMany(
+    { _id: { $in: orgIds } },
     {
       $set: {
         customer_portal_url: {
@@ -31,11 +46,14 @@ async function script() {
           is_configured: true
         },
         updatedAt: new Date(),
-  updatedBy: typeof UPDATED_BY !== "undefined" ? UPDATED_BY : "JENKINS"
+        updatedBy: typeof UPDATED_BY !== "undefined"
+          ? UPDATED_BY
+          : "JENKINS"
       }
     }
   );
 
+  // 🔹 Update CUSTOMER collection
   await db.customerdata1.updateMany(
     { _id: { $in: customerIds } },
     [
@@ -43,7 +61,11 @@ async function script() {
         $set: {
           customer_portal_url: {
             $concat: [(VAR3 ?? ""), "$customer_portal_hash"]
-          }
+          },
+          updatedAt: new Date(),
+          updatedBy: typeof UPDATED_BY !== "undefined"
+            ? UPDATED_BY
+            : "JENKINS"
         }
       }
     ]
@@ -52,7 +74,7 @@ async function script() {
 
 (async function main() {
   try {
-    if (!validate()) quit(1);
+    if (!(await validate())) quit(1);
 
     await count();   // preview
     await script();  // execute
