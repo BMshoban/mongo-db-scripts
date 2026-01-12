@@ -1,41 +1,38 @@
-function toObjectId(v) {
+// ---------- REQUIRED FOR PIPELINE ----------
+const DRY_RUN = typeof DRY_RUN !== "undefined" ? DRY_RUN : false;
+
+// ---------- HELPERS ----------
+function firstObjectId(v) {
   if (!v) throw new Error("Missing ObjectId");
+
+  // Jenkins injects ObjectIds as arrays
+  if (Array.isArray(v)) {
+    if (v.length === 0) throw new Error("Empty ObjectId array");
+    return v[0];
+  }
+
   return ObjectId(v.toString().replace(/^ObjectId:/i, "").trim());
 }
 
-
+// ---------- MAIN ----------
 (async function main() {
   try {
-    const orgId = toObjectId(VAR1);
-    const customerId = toObjectId(VAR2);
+    const orgId = firstObjectId(VAR1);
+    const customerId = firstObjectId(VAR2);
 
-    // ---- ORG UPDATE (ONE DOCUMENT) ----
-    const orgResult = db.organizations2_locals.updateOne(
-      { _id: orgId },
-      {
-        $set: {
-          customer_portal_url: {
-            domain_name: VAR3 ?? "",
-            is_configured: true
-          },
-          updatedAt: new Date(),
-          updatedBy: typeof UPDATED_BY !== "undefined"
-            ? UPDATED_BY
-            : "JENKINS"
-        }
-      }
-    );
+    // ---- ORG UPDATE ----
+    const orgMatched = db.organizations2_locals.countDocuments({ _id: orgId });
 
-    print(`MODIFIED:organizations2_locals=${orgResult.matchedCount}`);
+    print(`MODIFIED:organizations2_locals=${orgMatched}`);
 
-    // ---- CUSTOMER UPDATE (ONE DOCUMENT) ----
-    const custResult = db.customerdata1.updateOne(
-      { _id: customerId },
-      [
+    if (!DRY_RUN && orgMatched > 0) {
+      db.organizations2_locals.updateOne(
+        { _id: orgId },
         {
           $set: {
             customer_portal_url: {
-              $concat: [(VAR3 ?? ""), "$customer_portal_hash"]
+              domain_name: VAR3 ?? "",
+              is_configured: true
             },
             updatedAt: new Date(),
             updatedBy: typeof UPDATED_BY !== "undefined"
@@ -43,17 +40,36 @@ function toObjectId(v) {
               : "JENKINS"
           }
         }
-      ]
-    );
+      );
+    }
 
-    print(`MODIFIED:customerdata1=${custResult.matchedCount}`);
+    // ---- CUSTOMER UPDATE ----
+    const custMatched = db.customerdata1.countDocuments({ _id: customerId });
 
-    const total =
-      orgResult.matchedCount + custResult.matchedCount;
+    print(`MODIFIED:customerdata1=${custMatched}`);
 
-    print(`TOTAL_MODIFIED=${total}`);
+    if (!DRY_RUN && custMatched > 0) {
+      db.customerdata1.updateOne(
+        { _id: customerId },
+        [
+          {
+            $set: {
+              customer_portal_url: {
+                $concat: [(VAR3 ?? ""), "$customer_portal_hash"]
+              },
+              updatedAt: new Date(),
+              updatedBy: typeof UPDATED_BY !== "undefined"
+                ? UPDATED_BY
+                : "JENKINS"
+            }
+          }
+        ]
+      );
+    }
 
+    print(`TOTAL_MODIFIED=${orgMatched + custMatched}`);
     quit(0);
+
   } catch (e) {
     print("ERROR:", e.message);
     quit(1);
