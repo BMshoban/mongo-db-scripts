@@ -10,16 +10,16 @@ function toIn(v) {
 
 async function count() {
    const org_count = await db.organizations2_locals.countDocuments({
-    _id: VAR1
+    _id: toOne(VAR1)
   });
 
   const customer_count = await db.customerdata1.countDocuments({
-    org_id: VAR2
+    org_id: toIn(VAR2)
   });
 
-  print(`MODIFIED:organizations2_locals=${org_count}`);
-  print(`MODIFIED:customerdata1=${customer_count}`);
-  print(`TOTAL_MODIFIED=${org_count + customer_count}`);
+  print(`MATCHED:organizations2_locals=${org_count}`);
+  print(`MATCHED:customerdata1=${customer_count}`);
+  print(`TOTAL_MATCHED=${org_count + customer_count}`);
 
   return { org_count, customer_count };
 }
@@ -34,7 +34,7 @@ async function script() {
     return;
   }
 
-  const org_update = await db.organizations2_locals.updateOne({ _id: VAR1 }, {
+  const org_update = await db.organizations2_locals.updateOne({ _id: toOne(VAR1) }, {
     $set: {
       customer_portal_url: {
         domain_name: VAR3,
@@ -45,7 +45,7 @@ async function script() {
 // BACKUPS
   //console.log({ org_update })
 
-  const customer_update = await db.customerdata1.updateMany({ org_id: VAR2 }, [{
+  const customer_update = await db.customerdata1.updateMany({ org_id: toIn(VAR2) }, [{
     $set: {
       customer_portal_url: { $concat: [VAR3, "$customer_portal_hash"] }
     }
