@@ -1,5 +1,13 @@
 if (typeof DRY_RUN === 'undefined') DRY_RUN = true;
 
+function toOne(v) {
+  return Array.isArray(v) ? v[0] : v;
+}
+
+function toIn(v) {
+  return Array.isArray(v) ? { $in: v } : v;
+}
+
 async function count() {
    const org_count = await db.organizations2_locals.countDocuments({
     _id: VAR1
