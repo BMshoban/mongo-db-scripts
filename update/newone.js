@@ -1,11 +1,8 @@
-// ---------- REQUIRED FOR PIPELINE ----------
 const DRY_RUN = typeof DRY_RUN !== "undefined" ? DRY_RUN : false;
 
-// ---------- HELPERS ----------
 function firstObjectId(v) {
   if (!v) throw new Error("Missing ObjectId");
 
-  // Jenkins injects ObjectIds as arrays
   if (Array.isArray(v)) {
     if (v.length === 0) throw new Error("Empty ObjectId array");
     return v[0];
@@ -14,13 +11,11 @@ function firstObjectId(v) {
   return ObjectId(v.toString().replace(/^ObjectId:/i, "").trim());
 }
 
-// ---------- MAIN ----------
 (async function main() {
   try {
     const orgId = firstObjectId(VAR1);
     const customerId = firstObjectId(VAR2);
 
-    // ---- ORG UPDATE ----
     const orgMatched = db.organizations2_locals.countDocuments({ _id: orgId });
 
     print(`MODIFIED:organizations2_locals=${orgMatched}`);
@@ -43,7 +38,6 @@ function firstObjectId(v) {
       );
     }
 
-    // ---- CUSTOMER UPDATE ----
     const custMatched = db.customerdata1.countDocuments({ _id: customerId });
 
     print(`MODIFIED:customerdata1=${custMatched}`);
