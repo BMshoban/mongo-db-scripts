@@ -14,7 +14,7 @@ async function count() {
   });
 
   const customer_count = await db.customerdata1.countDocuments({
-    org_id: toIn(VAR2)
+    _id: toIn(VAR2)
   });
 
   print(`MATCHED:organizations2_locals=${org_count}`);
@@ -45,7 +45,7 @@ async function script() {
 // BACKUPS
   //console.log({ org_update })
 
-  const customer_update = await db.customerdata1.updateMany({ org_id: toIn(VAR2) }, [{
+  const customer_update = await db.customerdata1.updateMany({ _id: toIn(VAR2) }, [{
     $set: {
       customer_portal_url: { $concat: [VAR3, "$customer_portal_hash"] }
     }
