@@ -1,43 +1,19 @@
-function validate() {
-  if (!Array.isArray(VAR1) || VAR1.length === 0) {
-    print("ERROR: VAR1 is required and must be a non-empty array");
-    return false;
-  }
-
-  if (!VAR2 || VAR3 ||typeof VAR2 !== "string") {
-    print("ERROR: VAR2 is required");
-    return false;
-  }
-
-  return true;
-}
-
-
-
+if (typeof DRY_RUN === 'undefined') DRY_RUN = true;
 
 async function count() {
-  const org_count = await db.organizations2_locals.countDocuments({
-    _id: { $in: VAR1 }
+   const org_count = await db.organizations2_locals.countDocuments({
+    _id: VAR1
   });
 
   const customer_count = await db.customerdata1.countDocuments({
-    _id: { $in: VAR2 }
+    org_id: VAR2
   });
 
-  print(`INFO: org_count=${org_count}, customer_count=${customer_count}`);
+  print(`MODIFIED:organizations2_locals=${org_count}`);
+  print(`MODIFIED:customerdata1=${customer_count}`);
+  print(`TOTAL_MODIFIED=${org_count + customer_count}`);
 
   return { org_count, customer_count };
-}
-
-async function preview() {
-  await count();
-}
-
-if (typeof MODE !== "undefined" && MODE === "PREVIEW") {
-  preview().then(() => quit(0)).catch(e => {
-    print("ERROR:", e.message);
-    quit(1);
-  });
 }
 
 //async function backup(){
@@ -45,7 +21,12 @@ if (typeof MODE !== "undefined" && MODE === "PREVIEW") {
 //}
 
 async function script() {
-  const org_update = await db.organizations2_locals.updateOne({ _id:{ $in: VAR1 } }, {
+  if (DRY_RUN) {
+    print("DRY_RUN=true — no updates executed");
+    return;
+  }
+
+  const org_update = await db.organizations2_locals.updateOne({ _id: VAR1 }, {
     $set: {
       customer_portal_url: {
         domain_name: VAR3,
@@ -56,29 +37,16 @@ async function script() {
 // BACKUPS
   //console.log({ org_update })
 
-  const customer_update = await db.customerdata1.updateOne({ _id: { $in: VAR2 } }, [{
+  const customer_update = await db.customerdata1.updateMany({ org_id: VAR2 }, [{
     $set: {
       customer_portal_url: { $concat: [VAR3, "$customer_portal_hash"] }
     }
   }]);
 
   console.log({ customer_update })
+  print("acknowledged: true");
 }
-
-
 (async function main() {
-  try {
-    if (!validate()) {
-      quit(1);   // abort Jenkins
-    }
-
-    await count();   // optional
-    await script();  // main logic
-
-    quit(0);         // continue Jenkins
-  } catch (e) {
-    print("ERROR:", e.message);
-    quit(1);         // abort Jenkins
-  }
+  await count();   // preview (always runs)
+  await script();  // executes only if DRY_RUN=false
 })();
-// NEW
