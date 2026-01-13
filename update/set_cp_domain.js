@@ -1,5 +1,9 @@
 if (typeof DRY_RUN === 'undefined') DRY_RUN = true;
 
+function toOne(v) {
+  return Array.isArray(v) ? v[0] : v;
+}
+
 function toIn(v) {
   if (Array.isArray(v)) {
     return { $in: v };
