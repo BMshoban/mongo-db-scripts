@@ -54,15 +54,25 @@ async function script() {
 // BACKUPS
   //console.log({ org_update })
 
-  const customer_update = await db.customerdata1.updateMany({ org_id: toIn(VAR2) }, [{
+const customer_update = await db.customerdata1.updateMany(
+  {
+    org_id: toIn(VAR2),
+    customer_portal_hash: { $exists: true, $ne: null }
+  },
+  [{
     $set: {
-      customer_portal_url: { $concat: [VAR3, "$customer_portal_hash"] }
+      customer_portal_url: {
+        $concat: [VAR3, "$customer_portal_hash"]
+      }
     }
-  }]);
+  }]
+);
 
-  console.log({ customer_update })
-  print("acknowledged: true");
+console.log({ customer_update });
+print("acknowledged: true");
+
 }
+
 (async function main() {
   await count();   // preview (always runs)
   await script();  // executes only if DRY_RUN=false
