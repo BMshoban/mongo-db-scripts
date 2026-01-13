@@ -55,22 +55,30 @@ async function script() {
   //console.log({ org_update })
 
 const customer_update = await db.customerdata1.updateMany(
-  {
-    org_id: toIn(VAR2),
-    customer_portal_hash: { $exists: true, $ne: null }
-  },
-  [{
-    $set: {
-      customer_portal_url: {
-        $concat: [VAR3, "$customer_portal_hash"]
+  { org_id: toIn(VAR2) },
+  [
+    {
+      $set: {
+        customer_portal_hash: {
+          $ifNull: [
+            "$customer_portal_hash",
+            { $substr: [{ $toString: "$_id" }, 18, 8] }
+          ]
+        }
+      }
+    },
+    {
+      $set: {
+        customer_portal_url: {
+          $concat: [VAR3, "$customer_portal_hash"]
+        }
       }
     }
-  }]
+  ]
 );
 
 console.log({ customer_update });
 print("acknowledged: true");
-
 }
 
 (async function main() {
