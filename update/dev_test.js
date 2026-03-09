@@ -30,7 +30,7 @@ async function script() {
 
   print(`UPDATED: ${org_collection}=${org_update}`);
 
-  print("Acknowledged: true");
+  print("acknowledged: true");
 }
 
 (async function main() {
