@@ -10,6 +10,7 @@ async function count() {
   });
 
   print(`MATCHED:${collection}=${org_count}`);
+  print(`TOTAL_MATCHED=${org_count}`);
 
   return { org_count };
 }
