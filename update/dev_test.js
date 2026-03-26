@@ -38,8 +38,7 @@ async function script() {
         customer_portal_url: {
           domain_name: "VAR3",    
           is_configured: true,
-        },
-        SET_DATA                  
+        },                  
       },
     }
   );
@@ -51,8 +50,7 @@ async function script() {
         $set: {                  
           customer_portal_url: {
             $concat: ["VAR3", "$customer_portal_hash"],  
-          },
-          SET_DATA                
+          },                
         },
       },
     ]
