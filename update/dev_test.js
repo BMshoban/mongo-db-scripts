@@ -1,18 +1,26 @@
-//SCRIPT TO ENABLE SORT
+// SCRIPT TO ADD CUSTOMER PORTAL DOMAIN
 
 if (typeof DRY_RUN === "undefined") DRY_RUN = true;
 
-const collection = "organizations2_locals";
+const org_collection = "organizations";
+const cus_collection = "customers";
 
 async function count() {
-  const org_count = await db[collection].countDocuments({
-    _id: ObjectId(VAR1),
+  const org_count = await db[org_collection].countDocuments({
+    _id: NumberLong("VAR1"),      
   });
 
-  print(`MATCHED:${collection}=${org_count}`);
-  print(`TOTAL_MATCHED=${org_count}`);
+  const consumer_count = await db[cus_collection].countDocuments({
+    org_id: "VAR2",               
+  });
 
-  return { org_count };
+  print(`MATCHED: ${org_collection}=${org_count}`);
+  print(`MATCHED: ${cus_collection}=${consumer_count}`);
+
+  const total = org_count + consumer_count;
+  print(`TOTAL_MATCHED=${total}`);
+
+  return { org_count, consumer_count };
 }
 
 async function script() {
@@ -23,12 +31,35 @@ async function script() {
 
   print("Executing updates...");
 
-  const org_update = await db[collection].updateOne(
-    { _id: ObjectId(VAR1) },
-    { $set: { en_sort: true } }
+  const org_update = await db[org_collection].updateOne(
+    { _id: NumberLong("VAR1") },  
+    {
+      $set: {
+        customer_portal_url: {
+          domain_name: "VAR3",    
+          is_configured: true,
+        },
+        SET_DATA                  
+      },
+    }
   );
 
-  print(`UPDATED: ${org_collection}=${org_update}`);
+  const cus_update = await db[cus_collection].updateMany(
+    { org_id: "VAR2" },           
+    [
+      {
+        $set: {                  
+          customer_portal_url: {
+            $concat: ["VAR3", "$customer_portal_hash"],  
+          },
+          SET_DATA                
+        },
+      },
+    ]
+  );
+
+  print(`UPDATED: ${org_collection}=${org_update.modifiedCount}`);
+  print(`UPDATED: ${cus_collection}=${cus_update.modifiedCount}`);
 
   print("acknowledged: true");
 }
