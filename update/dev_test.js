@@ -2,12 +2,12 @@
 
 if (typeof DRY_RUN === "undefined") DRY_RUN = true;
 
-const org_collection = "organizations";
-const cus_collection = "customers";
+const org_collection = "organizations2_locals";
+const cus_collection = "customerdata1";
 
 async function count() {
   const org_count = await db[org_collection].countDocuments({
-    _id: NumberLong("VAR1"),      
+    _id: ObjectId("VAR1"),      
   });
 
   const consumer_count = await db[cus_collection].countDocuments({
@@ -32,7 +32,7 @@ async function script() {
   print("Executing updates...");
 
   const org_update = await db[org_collection].updateOne(
-    { _id: NumberLong("VAR1") },  
+    { _id: ObjectId("VAR1") },  
     {
       $set: {
         customer_portal_url: {
