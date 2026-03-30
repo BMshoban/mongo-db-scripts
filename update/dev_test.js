@@ -7,11 +7,11 @@ const cus_collection = "customerdata1";
 
 async function count() {
   const org_count = await db[org_collection].countDocuments({
-    _id: ObjectId(VAR1),      
+    _id: ObjectId("VAR1"),      
   });
 
   const consumer_count = await db[cus_collection].countDocuments({
-    org_id: VAR2,               
+    org_id: "VAR2",               
   });
 
   print(`MATCHED: ${org_collection}=${org_count}`);
@@ -32,7 +32,7 @@ async function script() {
   print("Executing updates...");
 
   const org_update = await db[org_collection].updateOne(
-    { _id: ObjectId(VAR1) },  
+    { _id: ObjectId("VAR1") },  
     {
       $set: {
         customer_portal_url: {
@@ -44,12 +44,12 @@ async function script() {
   );
 
   const cus_update = await db[cus_collection].updateMany(
-    { org_id: VAR2 },           
+    { org_id: "VAR2" },           
     [
       {
         $set: {                  
           customer_portal_url: {
-            $concat: [VAR3, "$customer_portal_hash"],  
+            $concat: ["VAR3", "$customer_portal_hash"],  
           },                
         },
       },
