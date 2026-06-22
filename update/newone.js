@@ -1,21 +1,29 @@
-if (typeof DRY_RUN === 'undefined') DRY_RUN = true;
+//BACKUP_REQUIRED=true
+if (typeof DRY_RUN === "undefined") DRY_RUN = true;
 
+const collection = "organizations";
+
+async function backupCollections() {
+  return [
+    {
+      collection: "organizations",
+      filter: {
+        _id: VAR1
+      }
+    }
+  ];
+}
 async function count() {
-  // 1. Wrap the variables in ObjectId() here so MongoDB can actually find them!
-  const count1 = await db.organization.countDocuments({ _id: ObjectId(VAR1) });
-  const count2 = await db.organization.countDocuments({ _id: ObjectId(VAR2) });
-  const count3 = await db.organization.countDocuments({ _id: ObjectId(VAR3) });
+  const org_count = await db[collection].countDocuments({
+    _id: VAR1,
+  });
 
-  const totalCount = count1 + count2 + count3;
+  print(`MATCHED:${collection}=${org_count}`);
+  print(`TOTAL_MATCHED=${org_count}`);
 
-  // Required outputs for Jenkins Security Validation
-  print(`MATCHED:organization=${totalCount}`);
-  print(`TOTAL_MATCHED=${totalCount}`);
-
-  return { totalCount };
+  return { org_count };
 }
 
-// 2. EXECUTION PHASE
 async function script() {
   if (DRY_RUN) {
     print("DRY_RUN=true — no updates executed");
@@ -24,20 +32,17 @@ async function script() {
 
   print("Executing updates...");
 
-  // ENABLE SORT
-  await db.organization.updateOne({_id: ObjectId(VAR1)}, {$set: {en_sort: true}});
-  
-  // CONSUMER GROUPING ENABLE
-  await db.organization.updateOne({_id: ObjectId(VAR2)}, {$set: {"cgs.icg": true, "cgs.gid_prefix": "", "cgs.grp_count": 1 }});
-  
-  // PROCESS GROUPING ENABLE
-  await db.organization.updateOne({_id: ObjectId(VAR3)}, {$set: {"cgs.ipg": true, "cgs.ipg_auto": true}});
+  const org_update = await db[collection].updateMany(
+    { _id: VAR1 },
+    { $set: { en_sort: true } }
+  );
+
+  print(`UPDATED: ${collection}=${org_update.modifiedCount}`);
 
   print("acknowledged: true");
 }
 
-// 4. MAIN TRIGGER
 (async function main() {
-  await count();   // Preview always runs
-  await script();  // Executes only if DRY_RUN=false
+  await count();
+  await script();
 })();
