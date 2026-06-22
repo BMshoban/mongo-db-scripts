@@ -1,12 +1,12 @@
 //BACKUP_REQUIRED=true
 if (typeof DRY_RUN === "undefined") DRY_RUN = true;
 
-const collection = "organizations";
+const collection = "organizations2_locals";
 
 async function backupCollections() {
   return [
     {
-      collection: "organizations",
+      collection: "organizations2_locals",
       filter: {
         _id: VAR1
       }
