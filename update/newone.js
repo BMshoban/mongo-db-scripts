@@ -11,9 +11,13 @@ async function backupCollections() {
   return [
     {
       collection: "customerdata1",
-      filter: {
-        org_id: { $in: ORG_IDS }
+      query: `
+      {
+        org_id: {
+          $in: ${JSON.stringify(ORG_IDS)}
+        }
       }
+      `
     }
   ];
 }
