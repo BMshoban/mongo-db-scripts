@@ -7,7 +7,9 @@ async function backupCollections() {
   return [
     {
       collection: "organizations2_locals",
-      ids: VAR1
+      filter: {
+        _id: VAR1
+      }
     }
   ];
 }
